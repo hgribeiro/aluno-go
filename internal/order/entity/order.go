@@ -2,11 +2,15 @@ package entity
 
 import "errors"
 
+type OrderRepositoryInterface interface {
+	Save(order *Order) error
+}
+
 type Order struct {
 	ID         string
 	Price      float64
 	Tax        float64
-	finalPrice float64
+	FinalPrice float64
 }
 
 func NewOrder(id string, price float64, tax float64) (*Order, error) {
@@ -22,8 +26,17 @@ func NewOrder(id string, price float64, tax float64) (*Order, error) {
 	return order, nil
 }
 
-func CalculateFinalPrice(order *Order) {
-	order.finalPrice = order.Price + order.Tax
+// ISSO AQUI É UM METODO, ELE RECEBE UM >RECEPTOR< QUANDO É DEFINIDO E,
+// REALIZA ALGUMA ACAO NO RECEPTOR, COMO É UM PONTEIRO O RECEPTOR, ELE MODIFICA NA INSTANCIA QUE
+// O METODO FOI INVOCADO
+
+func (o *Order) CalculateFinalPrice() error {
+	o.FinalPrice = o.Price + o.Tax
+	err := o.IsValid()
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func (o *Order) IsValid() error {
